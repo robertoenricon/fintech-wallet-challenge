@@ -1,0 +1,41 @@
+# Laravel
+/vendor
+/node_modules
+/public/build
+/public/hot
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Storage
+/storage/*
+!/storage/app
+!/storage/app/public
+!/storage/framework
+!/storage/framework/cache
+!/storage/framework/sessions
+!/storage/framework/views
+!/storage/logs
+
+# Cache
+/bootstrap/cache/*.php
+
+# Logs
+*.log
+/storage/logs/*.log
+
+# PHPUnit
+.phpunit.result.cache
+/phpunit.xml
+
+# IDEs
+/.idea
+/.vscode
+/.fleet
+/.zed
+
+# OS
+.DS_Store
+Thumbs.db
