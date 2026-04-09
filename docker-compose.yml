@@ -42,7 +42,7 @@ services:
       retries: 10
 
   vite:
-    image: node:20
+    image: node:20.19.0
     container_name: laravel_vite
     working_dir: /var/www
     ports:

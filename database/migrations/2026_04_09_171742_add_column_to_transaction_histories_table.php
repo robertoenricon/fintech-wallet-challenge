@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wallets', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
-            $table->decimal('balance', 10, 2)->default(0);
-            $table->timestamps();
+        Schema::table('transaction_histories', function (Blueprint $table) {
+            $table->enum('type', ['debit', 'credit'])->after('transfer_id');
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wallets');
+        Schema::table('transaction_histories', function (Blueprint $table) {
+            $table->dropColumn('type');
+        });
     }
 };

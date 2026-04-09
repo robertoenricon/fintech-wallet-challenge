@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Wallet extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'balance',
@@ -15,4 +18,10 @@ class Wallet extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function transactionHistories()
+    {
+        return $this->hasMany(TransactionHistory::class);
+    }
+    
 }
