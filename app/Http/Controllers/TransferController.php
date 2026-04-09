@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
 
-class TransferController extends Controller
+class TransferController extends BaseController
 {
     private TransferService $transferService;
 

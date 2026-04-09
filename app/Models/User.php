@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,14 +23,22 @@ class User extends Authenticatable
         'password',
     ];
 
-    public function wallet()
+    protected static function booted(): void
+    {
+        static::created(function (User $user): void {
+            $user->wallet()->firstOrCreate([], [
+                'balance' => 1000.00,
+            ]);
+        });
+    }
+
+    public function wallet(): HasOne
     {
         return $this->hasOne(Wallet::class);
     }
 
-    public function transactionHistories()
+    public function transactionHistories(): HasMany
     {
         return $this->hasMany(TransactionHistory::class);
     }
-    
 }

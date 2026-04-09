@@ -68,6 +68,7 @@ class TransferService
                 'user_id' => $sender->id,
                 'wallet_id' => $senderWallet->id,
                 'transfer_id' => $transfer->id,
+                'type' => TransactionHistory::TYPE_DEBIT,
                 'value' => $value,
                 'description' => 'Transferência enviada para ' . $recipient->email,
             ]);
@@ -76,6 +77,7 @@ class TransferService
                 'user_id' => $recipient->id,
                 'wallet_id' => $recipientWallet->id,
                 'transfer_id' => $transfer->id,
+                'type' => TransactionHistory::TYPE_CREDIT,
                 'value' => $value,
                 'description' => 'Transferência recebida de ' . $sender->email,
             ]);
