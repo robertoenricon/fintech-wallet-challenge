@@ -8,15 +8,26 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
-    public function login(string $email, string $password): bool
+    public function authenticate(string $email, string $password): ?User
     {
         $user = User::where('email', $email)->first();
 
         if (!$user) {
-            return false;
+            return null;
         }
 
         if (!Hash::check($password, $user->password)) {
+            return null;
+        }
+
+        return $user;
+    }
+
+    public function login(string $email, string $password): bool
+    {
+        $user = $this->authenticate($email, $password);
+
+        if (!$user) {
             return false;
         }
 
