@@ -4,11 +4,10 @@
 <div class="container">
     <div
         id="vue-app"
-        data-page="transfer-create"
-        data-store-url="{{ route('transfers.store') }}"
+        data-page="transfers-index"
         data-dashboard-url="{{ route('dashboard') }}"
-        data-email="{{ old('email', '') }}"
-        data-value="{{ old('value', '') }}"
+        data-transfer-create-url="{{ route('transfers.create') }}"
+        data-transfers='@json($transfers)'
     ></div>
 </div>
 @endsection

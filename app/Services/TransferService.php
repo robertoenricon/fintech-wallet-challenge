@@ -3,14 +3,32 @@
 namespace App\Services;
 
 use App\Models\Transfer;
-use App\Models\TransactionHistory;
 use App\Models\User;
+use App\Models\TransactionHistory;
 use App\Models\Wallet;
 use DomainException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class TransferService
 {
+    public function listForUser(User $user, int $limit = 10): Collection
+    {
+        return Transfer::query()
+            ->with([
+                'sender:id,name,email',
+                'recipient:id,name,email',
+            ])
+            ->where(function ($query) use ($user) {
+                $query
+                    ->where('sender_id', $user->id)
+                    ->orWhere('recipient_id', $user->id);
+            })
+            ->latest()
+            ->limit($limit)
+            ->get();
+    }
+
     public function transfer(User $sender, string $recipientEmail, float $value): Transfer
     {
         if ($value <= 0) {

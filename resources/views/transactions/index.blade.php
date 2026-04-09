@@ -114,7 +114,7 @@
                 </div>
 
                 <div class="mt-3">
-                    {{ $transactions->links() }}
+                    {{ $transactions->links('pagination::bootstrap-5') }}
                 </div>
             @else
                 <div class="alert alert-light border mb-0">

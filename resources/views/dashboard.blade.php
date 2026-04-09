@@ -2,34 +2,15 @@
 
 @section('content')
 <div class="container">
-    <div class="card shadow-sm border-0">
-        <div class="card-body">
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h1 class="h3 mb-0">Dashboard</h1>
-
-                <div class="d-flex gap-2">
-                    <a href="{{ route('transfers.create') }}" class="btn btn-success">
-                        Nova Transferência
-                    </a>
-
-                    <a href="{{ route('transactions.index') }}" class="btn btn-outline-primary">
-                        Histórico
-                    </a>
-                </div>
-            </div>
-
-            <p class="mb-2">
-                <strong>{{ $user->name }}</strong>
-            </p>
-
-            <p class="mb-0">
-                Saldo:
-                <strong>
-                    R$ {{ number_format($user->wallet->balance ?? 0, 2, ',', '.') }}
-                </strong>
-            </p>
-        </div>
-    </div>
+    <div
+        id="vue-app"
+        data-page="dashboard"
+        data-user-name="{{ $user->name }}"
+        data-balance="{{ $user->wallet->balance ?? 0 }}"
+        data-transfer-url="{{ route('transfers.create') }}"
+        data-transfers-url="{{ route('transfers.index') }}"
+        data-transactions-url="{{ route('transactions.index') }}"
+        data-recent-transactions="{{ json_encode($recentTransactions, JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_TAG | JSON_HEX_QUOT) }}"
+    ></div>
 </div>
 @endsection
