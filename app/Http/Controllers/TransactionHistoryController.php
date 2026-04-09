@@ -2,36 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TransactionHistory;
-use Illuminate\Http\Request;
+use App\Http\Requests\TransactionHistoryIndexRequest;
+
+use App\Services\TransactionHistoryService;
+
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
-class TransactionHistoryController extends Controller
+class TransactionHistoryController extends BaseController
 {
-    public function index(Request $request)
+    protected TransactionHistoryService $transactionHistoryService;
+
+    public function __construct(TransactionHistoryService $transactionHistoryService)
     {
-        $user = Auth::user();
+        $this->transactionHistoryService = $transactionHistoryService;
+    }
 
-        $query = TransactionHistory::with([
-                'transfer.sender:id,name,email',
-                'transfer.recipient:id,name,email',
-            ])
-            ->where('user_id', $user->id)
-            ->orderByDesc('created_at');
-
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-
-        if ($request->filled('start_date')) {
-            $query->whereDate('created_at', '>=', $request->start_date);
-        }
-
-        if ($request->filled('end_date')) {
-            $query->whereDate('created_at', '<=', $request->end_date);
-        }
-
-        $transactions = $query->paginate(10)->withQueryString();
+    public function index(TransactionHistoryIndexRequest $request): View
+    {
+        $transactions = $this->transactionHistoryService->paginateForUser(
+            Auth::user(),
+            $request->validated()
+        );
 
         return view('transactions.index', ['transactions' => $transactions]);
     }

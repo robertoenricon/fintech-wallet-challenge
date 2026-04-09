@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
@@ -10,7 +10,7 @@ use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     public function register(RegisterRequest $request): JsonResponse
     {
@@ -24,12 +24,11 @@ class AuthController extends Controller
 
         $token = $user->createToken('token')->plainTextToken;
 
-        return response()->json([
-            'message' => 'Usuário registrado com sucesso.',
-            'token' => $token,
-            'token_type' => 'Bearer',
+        return $this->successResponse([
             'user' => $user,
-        ], 201);
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ], 'Usuário registrado com sucesso.', 201);
     }
 
     public function login(LoginRequest $request, AuthService $authService): JsonResponse
@@ -40,32 +39,33 @@ class AuthController extends Controller
         );
 
         if (!$user) {
-            return response()->json([
-                'message' => 'Credenciais inválidas.',
-            ], 422);
+            return $this->errorResponse(
+                'Credenciais inválidas.',
+                ['credentials' => ['As credenciais informadas são inválidas.']],
+                422
+            );
         }
 
         $token = $user->createToken('token')->plainTextToken;
 
-        return response()->json([
-            'message' => 'Login realizado com sucesso.',
-            'token' => $token,
-            'token_type' => 'Bearer',
+        return $this->successResponse([
             'user' => $user,
-        ]);
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ], 'Login realizado com sucesso.');
     }
 
     public function me(): JsonResponse
     {
-        return response()->json(auth('api')->user());
+        return $this->successResponse([
+            'user' => request()->user(),
+        ], 'Usuário autenticado.');
     }
 
     public function logout(): JsonResponse
     {
         request()->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'message' => 'Logout realizado com sucesso.',
-        ]);
+        return $this->successResponse(null, 'Logout realizado com sucesso.');
     }
 }
