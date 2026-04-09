@@ -11,18 +11,23 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::create([
-            'name' => 'admin',
-            'email' => 'admin@email.com',
-            'password' => Hash::make('admin'),
-        ]);
+        $user = User::updateOrCreate(
+            ['email' => 'admin@email.com'],
+            [
+                'name' => 'admin',
+                'password' => Hash::make('admin'),
+            ]
+        );
 
-        $user->wallet()->create([
-            'balance' => 1000.00,
-        ]);
+        $user->wallet()->updateOrCreate(
+            ['user_id' => $user->id],
+            ['balance' => 1000.00]
+        );
 
-        User::factory(9)
-            ->has(Wallet::factory()->state(['balance' => fake()->randomFloat(2, 100, 5000)]), 'wallet')
-            ->create();
+        if (User::query()->count() <= 1) {
+            User::factory(9)
+                ->has(Wallet::factory()->state(['balance' => fake()->randomFloat(2, 100, 5000)]), 'wallet')
+                ->create();
+        }
     }
 }

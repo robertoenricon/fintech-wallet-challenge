@@ -172,8 +172,9 @@ Usuário principal criado pelo `UserSeeder`:
 - Saldo inicial: `R$ 1.000,00`
 
 ## Link do deploy público
-
-
+```bash
+https://fintech-wallet-challenge-production-6eb8.up.railway.app/login
+```
 
 ## Observações
 
