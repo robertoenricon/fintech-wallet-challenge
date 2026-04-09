@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TransferController;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +22,10 @@ Route::middleware('auth')->group(function () {
             'user' => Auth::user()
         ]);
     })->name('dashboard');
-
+    Route::get('/transfers/create', function () {
+        return view('transfers.create');
+    })->name('transfers.create');
+        
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/transfers', [TransferController::class, 'store'])->name('transfers.store');
 });
