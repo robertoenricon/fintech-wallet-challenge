@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TransactionHistoryController;
 use App\Http\Controllers\TransferController;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -28,4 +28,6 @@ Route::middleware('auth')->group(function () {
         
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/transfers', [TransferController::class, 'store'])->name('transfers.store');
+
+    Route::get('/transactions', [TransactionHistoryController::class, 'index'])->name('transactions.index');
 });
