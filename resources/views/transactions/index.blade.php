@@ -96,7 +96,7 @@
                                     </td>
 
                                     <td>
-                                        R$ {{ number_format($transaction->amount, 2, ',', '.') }}
+                                        R$ {{ number_format($transaction->value, 2, ',', '.') }}
                                     </td>
 
                                     <td>

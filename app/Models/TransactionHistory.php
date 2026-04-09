@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TransactionHistory extends Model
 {
+
+    public const TYPE_DEBIT = 'debit';
+    public const TYPE_CREDIT = 'credit';
+
     protected $fillable = [
         'user_id',
         'wallet_id',
