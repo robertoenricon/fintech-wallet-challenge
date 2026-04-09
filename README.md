@@ -1,59 +1,182 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Fintech Wallet
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicação web de carteira digital desenvolvida com Laravel 12, Vue 3 e MySQL para simular um fluxo simples de transferências entre usuários. O sistema permite cadastro de usuário, autenticação, visualização de saldo, envio de transferências, listagem das últimas movimentações e histórico com filtros por tipo e período.
 
-## About Laravel
+## Decisões técnicas
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+`Backend:`
+- Arquitetura backend organizada em camadas, com controllers para HTTP, requests para validação de entrada e services para concentrar as regras de negócio, seguindo padrões `SOLID`.
+- Validações centralizadas em FormRequests.
+- Autenticação web por sessão e autenticação de API com Laravel Sanctum.
+- Banco de dados MySQL com modelagem baseada em `users`, `wallets`, `transfers` e `transaction_histories`.
+- Modelagem do banco baseada separando saldo atual do histórico de movimentações e das transferências.
+- Criação automática de carteira no ciclo de vida do usuário, garantindo que novas contas já nasçam prontas para participar das regras do domínio.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+`Frontend`
+- Vue.js, componentes separados por camadas.
+- Blade para estrutura das paginas e Vue.js para interações.
+- Separação das páginas Vue por contexto de uso, como dashboard, criação de transferência e listagem, facilitando manutenção.
+- Estratégia de `UI` orientada a feedback imediato, com estados de carregamento, sucesso e erro no formulário de transferência.
+- Uso de `Axios` no frontend para envio `assíncrono` de transferências, `melhorando feedback` ao usuário sem recarregar a página.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Pré-requisitos
 
-## Learning Laravel
+Para rodar localmente sem Docker:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP 8.2+
+- Composer 2+
+- Node.js 20.19.0+ (`.nvmrc` usa `20.19.0`)
+- npm 10+
+- MySQL 8+
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Para rodar com Docker:
 
-## Laravel Sponsors
+- Docker
+- Docker Compose
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Instalação das dependências
 
-### Premium Partners
+### Opção 1: ambiente local
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1. Clone o repositório.
+2. Entre na pasta do projeto.
+3. Instale as dependências do backend:
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. Instale as dependências do frontend:
 
-## Code of Conduct
+```bash
+npm install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Opção 2: ambiente com Docker
 
-## Security Vulnerabilities
+1. Clone o repositório.
+2. Entre na pasta do projeto.
+3. Suba os containers:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+docker compose up -d --build
+```
+```bash
+docker compose exec app
+```
+```bash
+composer install
+```
+```bash
+cp .env.example .env
+```
+```bash
+php artisan key:generate
+```
+```bash
+php artisan migrate --seed
+```
+Isso irá:
+- criar as tabelas da aplicação;
+- criar o usuário seed principal;
+- gerar usuários adicionais com factory;
+- criar uma carteira para cada usuário.
+  
+```bash
+chmod -R 777 storage bootstrap/cache
+```
 
-## License
+O serviço `vite` já executa `npm install` automaticamente ao subir o ambiente.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Configuração do `.env`
+
+Exemplo de configuração padrão do projeto:
+
+```env
+APP_NAME=Laravel
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost
+
+APP_LOCALE=pt_BR
+APP_FALLBACK_LOCALE=pt_BR
+APP_FAKER_LOCALE=pt_BR
+
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=laravel
+DB_PASSWORD=secret
+
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+```
+
+### Ajuste para rodar sem Docker
+
+Se for usar MySQL instalado localmente, altere ao menos:
+
+```env
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=seu_usuario
+DB_PASSWORD=sua_senha
+APP_URL=http://127.0.0.1:8000
+```
+
+## Como iniciar o servidor
+
+### Ambiente local
+
+Terminal 1:
+
+```bash
+php artisan serve
+```
+
+Terminal 2:
+Obs: Rodar dentro do container do Vite.
+```bash
+npm run dev
+```
+
+A aplicação ficará disponível em:
+
+- Web: `http://localhost`
+- Vite: `http://localhost:5173`
+- MySQL: `127.0.0.1:3306`
+
+## Scripts úteis
+
+```bash
+composer run test
+```
+
+```bash
+npm run build
+```
+
+```bash
+composer run dev
+```
+
+## Credenciais do usuário seed para teste
+
+Usuário principal criado pelo `UserSeeder`:
+
+- E-mail: `admin@email.com`
+- Senha: `admin`
+- Saldo inicial: `R$ 1.000,00`
+
+## Link do deploy público
+
+
+
+## Observações
+
+- O projeto usa MySQL no `.env.example` e no `docker-compose.yml`.
+- O container `db` expõe a porta `3306` e usa as credenciais padrão `laravel/secret`.
+- Seed cria usuários extras via factory para facilitar testes de transferência entre contas.
