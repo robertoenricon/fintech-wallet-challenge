@@ -47,6 +47,11 @@ class TransferController extends BaseController
         ]);
     }
 
+    public function create(): View
+    {
+        return view('transfers.create');
+    }
+
     public function store(TransferRequest $request): JsonResponse
     {
         try {
