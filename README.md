@@ -62,7 +62,7 @@ npm install
 docker compose up -d --build
 ```
 ```bash
-docker compose exec app
+docker compose exec app bash
 ```
 ```bash
 composer install
