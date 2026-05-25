@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\TransactionHistory;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class TransactionHistoryService
 {
@@ -31,5 +32,41 @@ class TransactionHistoryService
         }
 
         return $query->paginate(10)->withQueryString();
+    }
+
+    public function recentForUser(User $user, int $limit = 5): Collection
+    {
+        return TransactionHistory::query()
+            ->with([
+                'transfer.sender:id,name,email',
+                'transfer.recipient:id,name,email',
+            ])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->limit($limit)
+            ->get()
+            ->map(function (TransactionHistory $transaction) {
+                $transfer = $transaction->transfer;
+                $involvedUser = null;
+
+                if ($transfer) {
+                    $involvedUser = $transaction->type === TransactionHistory::TYPE_DEBIT
+                        ? $transfer->recipient
+                        : $transfer->sender;
+                }
+
+                return [
+                    'id' => $transaction->id,
+                    'type' => $transaction->type,
+                    'value' => (float) $transaction->value,
+                    'description' => $transaction->description,
+                    'created_at' => $transaction->created_at?->toIso8601String(),
+                    'involved_user' => $involvedUser ? [
+                        'name' => $involvedUser->name,
+                        'email' => $involvedUser->email,
+                    ] : null,
+                ];
+            })
+            ->values();
     }
 }
